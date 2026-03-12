@@ -4,7 +4,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Binary Converter</title>
+
+    <!-- Primary SEO -->
+    <title>Useless Networking Tools</title>
+    <meta name="description" content="Networks and stuff ig...">
+    <meta name="keywords" content="binary converter, host bits calculator, networking tools, subnetting, 2^n-2, networking class, binary">
+    <meta name="author" content="Networking Tools">
+    <link rel="canonical" href="https://useless-networking-tools.vercel.app/">
+
+    <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://useless-networking-tools.vercel.app/">
+    <meta property="og:title" content="Useless Networking Tools">
+    <meta property="og:description" content="Networks and stuff ig...">
+    <meta property="og:image" content="https://useless-networking-tools.vercel.app/assets/metaImgNetwork.jpg">
+
+
+
+
+    <!-- Favicon fallback -->
+    <link rel="icon" href="/assets/metaImgNetwork.jpg" type="image/jpeg">
     <style>
         * {
             font-family: 'Courier New', Courier, monospace;
@@ -235,7 +254,7 @@
         <input type="number" id="machines" placeholder="e.g 30" inputmode="numeric">
         <button onclick="calc()">Calculate</button>
         <hr class="divider">
-        <div class="output-label">Bits</div>
+        <div class="output-label">Solution</div>
         <p id="solved"></p>
     </div>
 
@@ -250,7 +269,7 @@
             const output = document.getElementById("output");
             const parsed = parseInt(input.value);
             if (isNaN(parsed) || input.value === "") {
-                output.innerHTML = "a number would <br>help...";
+                output.innerHTML = "a number would help...";
                 return;
             }
             if (parsed < 0) {
@@ -258,7 +277,7 @@
                 return;
             }
             if (parsed > 100000) {
-                output.innerHTML = "No here take it back: <br>" + "<b>" + parsed + "</b>";
+                output.innerHTML = "bro really said " + parsed;
                 return;
             }
 
@@ -287,8 +306,13 @@
             const solved = document.getElementById("solved");
             const parsed = parseInt(machines.value);
 
-            if (isNaN(parsed) || machines.value === "") {
+            const raw = machines.value.trim();
+            if (raw === "" || isNaN(Number(raw))) {
                 solved.innerHTML = "machines... as in a number of them";
+                return;
+            }
+            if (!Number.isInteger(Number(raw))) {
+                solved.innerHTML = "half a machine? be so serious";
                 return;
             }
             if (parsed < 0) {
@@ -297,10 +321,6 @@
             }
             if (parsed === 0) {
                 solved.innerHTML = "0 machines? so why are we here";
-                return;
-            }
-            if (!Number.isInteger(parseFloat(machines.value))) {
-                solved.innerHTML = "half a machine? be so serious";
                 return;
             }
             if (parsed > 1000000) {
