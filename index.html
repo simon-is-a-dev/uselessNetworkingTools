@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Converter</title>
+    <style>
+        * {
+            font-family: 'Courier New', Courier, monospace;
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: #1a1a1a;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 24px;
+        }
+
+        .row {
+            display: flex;
+            flex-direction: row;
+            gap: 0;
+            width: 100%;
+            max-width: 780px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+
+        /* Stack on mobile */
+        @media (max-width: 700px) {
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 360px;
+            flex: 1;
+            padding: 40px;
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                padding: 40px 20px;
+            }
+        }
+
+        .label {
+            font-size: 10px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 32px;
+        }
+
+        h1 {
+            font-size: 13px;
+            font-weight: normal;
+            color: #999;
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: #f0ebe0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: clamp(22px, 5vw, 28px);
+            padding: 8px 0;
+            outline: none;
+            margin-bottom: 24px;
+            transition: border-color 0.2s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+
+        input[type="number"]:focus,
+        input[type="text"]:focus {
+            border-bottom-color: #f0ebe0;
+        }
+
+        input[type="number"]::placeholder,
+        input[type="text"]::placeholder {
+            color: #444;
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+        }
+
+        button {
+            background: transparent;
+            border: 1px solid #444;
+            color: #f0ebe0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 10px;
+            letter-spacing: 3px;
+            padding: 12px 24px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s, border-color 0.2s;
+            width: 100%;
+            touch-action: manipulation;
+        }
+
+        @media (min-width: 480px) {
+            button {
+                width: auto;
+            }
+        }
+
+        button:hover {
+            background: #f0ebe0;
+            color: #1a1a1a;
+            border-color: #f0ebe0;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #2a2a2a;
+            margin: 24px 0;
+        }
+
+        .output-label {
+            font-size: 9px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: #555;
+            margin-bottom: 12px;
+        }
+
+        #output {
+            font-size: clamp(14px, 3vw, 18px);
+            color: #f0ebe0;
+            letter-spacing: 2px;
+            word-break: break-all;
+            line-height: 1.8;
+            min-height: 28px;
+        }
+
+        #solved {
+            font-size: clamp(12px, 2.5vw, 14px);
+            color: #f0ebe0;
+            letter-spacing: 1px;
+            line-height: 2;
+            min-height: 28px;
+        }
+
+        .step {
+            display: block;
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+
+        .step.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .step.dim {
+            opacity: 0.2;
+        }
+
+        .step.highlight {
+            color: #f0ebe0;
+            font-weight: bold;
+        }
+
+        .col-divider {
+            width: 1px;
+            background: #2a2a2a;
+            align-self: stretch;
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 700px) {
+            .col-divider {
+                width: 100%;
+                height: 1px;
+                align-self: auto;
+            }
+        }
+
+        @supports (padding: env(safe-area-inset-bottom)) {
+            body {
+                padding-bottom: calc(60px + env(safe-area-inset-bottom));
+                padding-left: calc(24px + env(safe-area-inset-left));
+                padding-right: calc(24px + env(safe-area-inset-right));
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="row">
+
+    <!-- 001: Binary Converter -->
+    <div class="container">
+        <div class="label">Converter / 001</div>
+        <h1>Input a number to convert</h1>
+        <input type="number" id="input" placeholder="0" inputmode="numeric">
+        <button onclick="convert()">Convert</button>
+        <hr class="divider">
+        <div class="output-label">Binary</div>
+        <p id="output"></p>
+    </div>
+
+    <div class="col-divider"></div>
+
+    <!-- 002: Host Bits Calculator -->
+    <div class="container">
+        <div class="label">Calculator / 002</div>
+        <h1>Enter number of machines</h1>
+        <input type="number" id="machines" placeholder="e.g 30" inputmode="numeric">
+        <button onclick="calc()">Calculate</button>
+        <hr class="divider">
+        <div class="output-label">Bits</div>
+        <p id="solved"></p>
+    </div>
+
+    </div>
+
+
+
+    <script>
+        // 001 — Binary Converter with fast counting animation
+        function convert() {
+            const input = document.getElementById("input");
+            const output = document.getElementById("output");
+            const parsed = parseInt(input.value);
+            if (isNaN(parsed) || input.value === "") {
+                output.innerHTML = "a number would <br>help...";
+                return;
+            }
+            if (parsed < 0) {
+                output.innerHTML = "negative binary? bold request";
+                return;
+            }
+            if (parsed > 100000) {
+                output.innerHTML = "No here take it back: <br>" + "<b>" + parsed + "</b>";
+                return;
+            }
+
+            const target = parsed;
+            const totalDuration = 800; // always finish in ~800ms
+            const steps = Math.min(target, 60); // max 60 frames
+            const increment = Math.ceil(target / steps);
+            const delay = totalDuration / steps;
+            let current = 0;
+            output.innerHTML = (0).toString(2);
+
+            const interval = setInterval(() => {
+                current = Math.min(current + increment, target);
+                output.innerHTML = current.toString(2);
+                if (current >= target) clearInterval(interval);
+            }, delay);
+        }
+
+        document.getElementById("input").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") convert();
+        });
+
+        // 002 — Host Bits Calculator with step-by-step then final answer
+        function calc() {
+            const machines = document.getElementById("machines");
+            const solved = document.getElementById("solved");
+            const parsed = parseInt(machines.value);
+
+            if (isNaN(parsed) || machines.value === "") {
+                solved.innerHTML = "machines... as in a number of them";
+                return;
+            }
+            if (parsed < 0) {
+                solved.innerHTML = "last time i checked you cant have a negative machine";
+                return;
+            }
+            if (parsed === 0) {
+                solved.innerHTML = "0 machines? so why are we here";
+                return;
+            }
+            if (!Number.isInteger(parseFloat(machines.value))) {
+                solved.innerHTML = "half a machine? be so serious";
+                return;
+            }
+            if (parsed > 1000000) {
+                solved.innerHTML = "that's not a network, that's a country";
+                return;
+            }
+
+            const n = Math.ceil(Math.log2(parsed + 2));
+
+            const steps = [
+                `2<sup>n</sup> - 2 = ${parsed}`,
+                `2<sup>n</sup> = ${parsed + 2}`,
+                `n = log₂(${parsed + 2})`,
+                n !== Math.log2(parsed + 2)
+                    ? `n = ${n} <span style="opacity:0.4;font-size:0.85em">(rounded up)</span>`
+                    : `n = ${n}`,
+            ];
+
+            solved.innerHTML = steps.map((s, i) =>
+                `<span class="step" id="step-${i}">${s}</span>`
+            ).join("");
+
+            const totalSteps = steps.length;
+
+            steps.forEach((_, i) => {
+                setTimeout(() => {
+                    const el = document.getElementById(`step-${i}`);
+                    if (el) el.classList.add("visible");
+
+                    // dim all previous steps as new one appears
+                    if (i > 0) {
+                        for (let j = 0; j < i; j++) {
+                            const prev = document.getElementById(`step-${j}`);
+                            if (prev) prev.classList.add("dim");
+                        }
+                    }
+
+                    // After last step appears, wait then fade all out and show answer
+                    if (i === totalSteps - 1) {
+                        setTimeout(() => {
+                            // fade all steps out
+                            document.querySelectorAll(".step").forEach(s => {
+                                s.style.transition = "opacity 0.5s ease";
+                                s.style.opacity = "0";
+                            });
+
+                            // after fade, replace with final answer
+                            setTimeout(() => {
+                                solved.style.transition = "opacity 0.4s ease";
+                                solved.style.opacity = "0";
+                                setTimeout(() => {
+                                    solved.innerHTML = `<strong style="font-size:clamp(14px,3vw,18px);letter-spacing:2px;color:#f0ebe0;">${n} bits</strong><br><span style="opacity:0.4;font-size:10px;letter-spacing:3px;">FOR ${parsed} MACHINES</span>`;
+                                    solved.style.opacity = "1";
+                                }, 400);
+                            }, 500);
+                        }, 600);
+                    }
+                }, i * 450);
+            });
+        }
+
+        document.getElementById("machines").addEventListener("keydown", function (e) {
+            if (e.key === "Enter") calc();
+        });
+
+
+    </script>
+</body>
+
+</html>
